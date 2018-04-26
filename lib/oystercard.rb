@@ -22,7 +22,7 @@ class Oystercard
 
   def touch_in(entry_station)
     raise 'insufficient funds available' if balance < @minimum
-    # @history << journey if in_journey?
+    @history << journey if in_journey?
     @journey = Hash.new(2)
     @journey[:entry_station] = entry_station
   end
@@ -31,7 +31,8 @@ class Oystercard
     unless in_journey?
       @journey = Hash.new(2)
     end
-    deduct(@minimum)
+    deduct(@minimum) if in_journey?
+    deduct(@penalty) unless in_journey?
     @journey[:exit_station] = exit_station
     adds_journey
   end
