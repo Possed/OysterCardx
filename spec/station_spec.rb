@@ -1,3 +1,4 @@
+require 'station'
 describe Station do
   let(:a_station) { Station.new(:bank, 5) }
 

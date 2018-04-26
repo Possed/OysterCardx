@@ -8,12 +8,13 @@ class Oystercard
   MAXIMUM_BALANCE = 90
   MINIMUM_BALANCE = 1
 
-  def initialize
+  def initialize(journey_class = Journey)
     @balance = 0
     @limit = MAXIMUM_BALANCE
     @minimum = MINIMUM_BALANCE
     @history = []
-    @journey = Journey.new
+    @journey_class = journey_class
+    @penalty = 6
 
   end
 
@@ -23,19 +24,16 @@ class Oystercard
   end
 
   def touch_in(entry_station)
+    @journey = @journey_class.new
     raise 'insufficient funds available' if balance < @minimum
-    @history << journey if in_journey?
-    # @journey = Hash.new(2)
-    # @journey[:entry_station] = entry_station
+    entry_penalty if in_journey?
+    journey.start_journey(entry_station)
   end
 
   def touch_out(exit_station)
-    unless in_journey?
-      @journey = Hash.new(2)
-    end
-    deduct(@minimum) if in_journey?
-    deduct(@penalty) unless in_journey?
-    @journey[:exit_station] = exit_station
+    exit_penalty unless in_journey?
+    @journey.end_journey(exit_station)
+    deduct_fare(@minimum)
     adds_journey
   end
 
@@ -43,9 +41,19 @@ class Oystercard
     !!journey
   end
 
+  def entry_penalty
+    @history << journey
+    deduct_fare(@penalty)
+  end
+
+  def exit_penalty
+    # @journey = Hash.new
+    deduct_fare(@penalty)
+  end
+
   private
 
-  def deduct(amount)
+  def deduct_fare(amount)
     @balance -= amount
   end
 
