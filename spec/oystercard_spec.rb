@@ -36,11 +36,11 @@ describe Oystercard do
       expect { subject.touch_in(entry_station) }.to raise_error 'insufficient funds available'
     end
 
-    it 'remembers entry_station when touch_in is called' do
-      subject.top_up(5)
-      subject.touch_in(entry_station)
-      expect(subject.journey[:entry_station]).to eq(entry_station)
-    end
+    # it 'remembers entry_station when touch_in is called' do
+    #   subject.top_up(5)
+    #   subject.touch_in(entry_station)
+    #   expect(subject.journey[:entry_station]).to eq(entry_station)
+    # end
 
   end
 

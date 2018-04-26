@@ -1,4 +1,5 @@
 require_relative 'station'
+require_relative 'journey'
 
 # Oystercard class
 class Oystercard
@@ -12,6 +13,7 @@ class Oystercard
     @limit = MAXIMUM_BALANCE
     @minimum = MINIMUM_BALANCE
     @history = []
+    @journey = Journey.new
 
   end
 
@@ -23,8 +25,8 @@ class Oystercard
   def touch_in(entry_station)
     raise 'insufficient funds available' if balance < @minimum
     @history << journey if in_journey?
-    @journey = Hash.new(2)
-    @journey[:entry_station] = entry_station
+    # @journey = Hash.new(2)
+    # @journey[:entry_station] = entry_station
   end
 
   def touch_out(exit_station)
