@@ -19,6 +19,7 @@ class Oystercard
 
   def touch_in(entry_station, journey = Journey.new)
     raise 'insufficient funds available' if insufficient_funds?
+    deduct_fare(@journey.fare) if touch_out_missed?
     @journey = journey
     @journey.start(entry_station)
   end
@@ -31,6 +32,9 @@ class Oystercard
   end
 
   private
+  def touch_out_missed?
+    !@journey.nil?
+  end
 
   def insufficient_funds?
     balance < MINIMUM_BALANCE

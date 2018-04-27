@@ -5,6 +5,7 @@ describe Oystercard do
   let(:entry_station) {double :station}
   let(:exit_station) {double :station}
   let(:normal_fare) { 1 }
+  let(:penalty) { 6 }
   let(:journey) { double :journey, start: entry_station, end: exit_station, entry_station: entry_station, exit_station: exit_station }
 
   describe '#initialize' do
@@ -40,6 +41,14 @@ describe Oystercard do
       subject.touch_in(entry_station, journey)
       expect(subject.journey.entry_station).to eq entry_station
     end
+
+    it 'will charge penalty if previous journey incomplete' do
+      subject.top_up(described_class::MAXIMUM_BALANCE)
+      subject.touch_in(entry_station, journey)
+      allow(journey).to receive(:complete?).and_return false
+      allow(journey).to receive(:fare).and_return(penalty)
+      expect { subject.touch_in(entry_station, journey) }.to change { subject.balance }.by (-penalty)
+    end
   end
 
   describe '#touch_out', :touch_out do
@@ -71,5 +80,6 @@ describe Oystercard do
       subject.touch_out(exit_station)
       expect(subject.journey).to be_nil
     end
+
   end
 end
